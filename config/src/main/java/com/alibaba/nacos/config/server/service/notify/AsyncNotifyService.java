@@ -70,6 +70,8 @@ public class AsyncNotifyService extends AbstractEventListener {
     public void onEvent(Event event) {
 
         // 并发产生 ConfigDataChangeEvent
+        // 注释1：配置改动后台管理平台时，http 发布事件给所有的注册中心，实时更新 ItemCache：
+        // http://192.168.0.30:8848/nacos/v1/cs/communication/dataChange?dataId=AppA&group=DEFAULT_GROUP&tenant=8fcb4fd9-70de-4def-839b-a03e96f26db4
         if (event instanceof ConfigDataChangeEvent) {
             ConfigDataChangeEvent evt = (ConfigDataChangeEvent) event;
             long dumpTs = evt.lastModifiedTs;

@@ -46,7 +46,7 @@ import static com.alibaba.nacos.core.utils.SystemUtils.STANDALONE_MODE;
 
 /**
  * local data source
- *
+ * 注释1：连接到 derby 数据库
  * @author Nacos
  */
 @Service("localDataSourceService")

@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * cache item
- *
+ * 注释1：根据 groupKey 单例
  * @author Nacos
  */
 public class CacheItem {

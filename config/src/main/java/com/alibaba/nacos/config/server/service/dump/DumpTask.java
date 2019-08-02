@@ -205,7 +205,7 @@ class DumpProcessor implements TaskProcessor {
                 return result;
             } else {
                 ConfigInfo4Tag cf = dumpService.persistService.findConfigInfo4Tag(dataId, group, tenant, tag);
-                //
+                // 注释1：根据 groupKey 去数据库拿具体值
                 boolean result;
                 if (null != cf) {
                     result = ConfigService.dumpTag(dataId, group, tenant, tag, cf.getContent(), lastModified);

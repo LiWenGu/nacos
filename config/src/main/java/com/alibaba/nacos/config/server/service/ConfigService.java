@@ -160,6 +160,7 @@ public class ConfigService {
                         + "lastModifiedNew={}",
                     groupKey, md5, ConfigService.getLastModifiedTs(groupKey), lastModifiedTs);
             } else if (!STANDALONE_MODE || PropertyUtil.isStandaloneUseMysql()) {
+                // 注释1：保存配置信息到磁盘？不用MYSQL？
                 DiskUtil.saveTagToDisk(dataId, group, tenant, tag, content);
             }
 
@@ -531,6 +532,7 @@ public class ConfigService {
      * @return 零表示没有数据，失败。正数表示成功，负数表示有写锁导致加锁失败。
      */
     static public int tryReadLock(String groupKey) {
+        // 注释1：什么时候塞入的？
         CacheItem groupItem = CACHE.get(groupKey);
         int result = (null == groupItem) ? 0 : (groupItem.rwLock.tryReadLock() ? 1 : -1);
         if (result < 0) {
@@ -574,6 +576,7 @@ public class ConfigService {
             return item;
         }
         CacheItem tmp = new CacheItem(groupKey);
+        // 注释1：塞入CacheItem
         item = CACHE.putIfAbsent(groupKey, tmp);
         return (null == item) ? tmp : item;
     }

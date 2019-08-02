@@ -70,6 +70,7 @@ public class ConfigServletInner {
         throws IOException, ServletException {
 
         // 长轮询
+        // 注释1：只会走在这里
         if (LongPollingService.isSupportLongPolling(request)) {
             longPollingService.addLongPollingClient(request, response, clientMd5Map, probeRequestSize);
             return HttpServletResponse.SC_OK + "";
@@ -111,9 +112,11 @@ public class ConfigServletInner {
      */
     public String doGetConfig(HttpServletRequest request, HttpServletResponse response, String dataId, String group,
                               String tenant, String tag, String clientIp) throws IOException, ServletException {
+        // 注释1：生成 key，用于加读写锁
         final String groupKey = GroupKey2.getKey(dataId, group, tenant);
         String autoTag = request.getHeader("Vipserver-Tag");
         String requestIpApp = RequestUtil.getAppName(request);
+        // 注释1：使用简单的读写锁
         int lockResult = tryConfigReadLock(request, response, groupKey);
 
         final String requestIp = RequestUtil.getRemoteIp(request);
@@ -137,6 +140,7 @@ public class ConfigServletInner {
                 if (isBeta) {
                     md5 = cacheItem.getMd54Beta();
                     lastModified = cacheItem.getLastModifiedTs4Beta();
+                    // 注释1：单体下，从数据查，否则从文件查
                     if (STANDALONE_MODE && !PropertyUtil.isStandaloneUseMysql()) {
                         configInfoBase = persistService.findConfigInfo4Beta(dataId, group, tenant);
                     } else {

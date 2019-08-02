@@ -145,7 +145,9 @@ public class ConfigController {
         ConfigInfo configInfo = new ConfigInfo(dataId, group, tenant, appName, content);
         if (StringUtils.isBlank(betaIps)) {
             if (StringUtils.isBlank(tag)) {
+                // 注释1：数据持久化
                 persistService.insertOrUpdate(srcIp, srcUser, configInfo, time, configAdvanceInfo, false);
+                // 注释1：发送配置更改事件，基于发布订阅模式，监听配置使用到了这里。
                 EventDispatcher.fireEvent(new ConfigDataChangeEvent(false, dataId, group, tenant, time.getTime()));
             } else {
                 persistService.insertOrUpdateTag(configInfo, tag, srcIp, srcUser, time, false);
@@ -224,6 +226,7 @@ public class ConfigController {
         final Timestamp time = TimeUtils.getCurrentTime();
         ConfigTraceService.logPersistenceEvent(dataId, group, tenant, null, time.getTime(), clientIp,
             ConfigTraceService.PERSISTENCE_EVENT_REMOVE, null);
+        // 注释1：发布配置删除事件
         EventDispatcher.fireEvent(new ConfigDataChangeEvent(false, dataId, group, tenant, tag, time.getTime()));
         return true;
     }

@@ -32,7 +32,7 @@ public class ConfigExample {
 
     public static void main(String[] args) throws NacosException, InterruptedException {
         String serverAddr = "localhost";
-        String dataId = "test";
+        String dataId = "AppA";
         String group = "DEFAULT_GROUP";
         Properties properties = new Properties();
         properties.put("serverAddr", serverAddr);
@@ -50,7 +50,7 @@ public class ConfigExample {
                 return null;
             }
         });
-
+/*
         boolean isPublishOk = configService.publishConfig(dataId, group, "content");
         System.out.println(isPublishOk);
 
@@ -60,11 +60,12 @@ public class ConfigExample {
 
         boolean isRemoveOk = configService.removeConfig(dataId, group);
         System.out.println(isRemoveOk);
-        Thread.sleep(3000);
+        Thread.sleep(3000);*/
 
         content = configService.getConfig(dataId, group, 5000);
         System.out.println(content);
-        Thread.sleep(300000);
+        while (true) {
 
+        }
     }
 }

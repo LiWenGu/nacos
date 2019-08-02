@@ -32,7 +32,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 用于处理一定要执行成功的任务 单线程的方式处理任务，保证任务一定被成功处理
- *
+ * 注释1：任务0.1s执行一次，例如配置发布，变更数据的md5任务，近实时刷新配置CacheItem缓存
  * @author huali
  */
 public final class TaskManager implements TaskManagerMBean {

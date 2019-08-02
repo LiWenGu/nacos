@@ -221,6 +221,7 @@ public class LongPollingService extends AbstractEventListener {
             // do nothing but set fix polling timeout
         } else {
             long start = System.currentTimeMillis();
+            // 注释1：根据内存中的 CacheItem 对比key进行判断是否更新过
             List<String> changedGroups = MD5Util.compareMd5(req, rsp, clientMd5Map);
             if (changedGroups.size() > 0) {
                 generateResponse(req, rsp, changedGroups);
@@ -240,7 +241,8 @@ public class LongPollingService extends AbstractEventListener {
         final AsyncContext asyncContext = req.startAsync();
         // AsyncContext.setTimeout()的超时时间不准，所以只能自己控制
         asyncContext.setTimeout(0L);
-
+        // 注释1：定时任务，10s一次，内部也会根据内存中的 CacheItem 对比key进行判断是否更新过
+        // TODO：分布式情况 CacheItem 怎么办？创建在A服务器上，请求到B服务器上
         scheduler.execute(
             new ClientLongPolling(asyncContext, clientMd5Map, ip, probeRequestSize, timeout, appName, tag));
     }
@@ -366,6 +368,11 @@ public class LongPollingService extends AbstractEventListener {
 
     // =================
 
+    /**
+     * 注释1：监听配置时的轮询任务
+     * 要么被10s一次的任务刷到
+     * 要么被配置修改接口发送事件时调用，从而实现实时的配置更新：generateResponse 方法的调用
+     */
     class ClientLongPolling implements Runnable {
 
         @Override

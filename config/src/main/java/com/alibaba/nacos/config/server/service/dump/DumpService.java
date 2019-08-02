@@ -307,6 +307,7 @@ public class DumpService {
 
     public void dump(String dataId, String group, String tenant, long lastModified, String handleIp, boolean isBeta) {
         String groupKey = GroupKey2.getKey(dataId, group, tenant);
+        // 注释1：dumpTask 任务0.1s刷一次任务请求
         dumpTaskMgr.addTask(groupKey, new DumpTask(groupKey, lastModified, handleIp, isBeta));
     }
 

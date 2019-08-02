@@ -111,14 +111,14 @@ public class MD5Util {
         List<String> tmpList = new ArrayList<String>(3);
         for (int i = start; i < configKeysString.length(); i++) {
             char c = configKeysString.charAt(i);
-            if (c == WORD_SEPARATOR_CHAR) {
+            if (c == '~') {
                 tmpList.add(configKeysString.substring(start, i));
                 start = i + 1;
                 if (tmpList.size() > 3) {
                     // 畸形报文。返回参数错误
                     throw new IllegalArgumentException("invalid protocol,too much key");
                 }
-            } else if (c == LINE_SEPARATOR_CHAR) {
+            } else if (c == '*') {
                 String endValue = "";
                 if (start + 1 <= i) {
                     endValue = configKeysString.substring(start, i);

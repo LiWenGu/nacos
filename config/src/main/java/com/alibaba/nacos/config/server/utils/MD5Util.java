@@ -111,14 +111,14 @@ public class MD5Util {
         List<String> tmpList = new ArrayList<String>(3);
         for (int i = start; i < configKeysString.length(); i++) {
             char c = configKeysString.charAt(i);
-            if (c == '~') {
+            if (c == WORD_SEPARATOR_CHAR) {
                 tmpList.add(configKeysString.substring(start, i));
                 start = i + 1;
                 if (tmpList.size() > 3) {
                     // 畸形报文。返回参数错误
                     throw new IllegalArgumentException("invalid protocol,too much key");
                 }
-            } else if (c == '*') {
+            } else if (c == LINE_SEPARATOR_CHAR) {
                 String endValue = "";
                 if (start + 1 <= i) {
                     endValue = configKeysString.substring(start, i);
@@ -167,8 +167,8 @@ public class MD5Util {
         return count;
     }
 
-    static final char WORD_SEPARATOR_CHAR = (char)2;
-    static final char LINE_SEPARATOR_CHAR = (char)1;
+    static final char WORD_SEPARATOR_CHAR = '~';//(char)2;
+    static final char LINE_SEPARATOR_CHAR = '*';//(char)1;
 
 }
 

@@ -24,13 +24,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author nacos
+ * 注释1：raft节点属性
  */
 public class RaftPeer {
 
     public String ip;
-
+    // 投票给哪个IP
     public String voteFor;
-
+    // 投票数
     public AtomicLong term = new AtomicLong(0L);
 
     public volatile long leaderDueMs = RandomUtils.nextLong(0, GlobalExecutor.LEADER_TIMEOUT_MS);

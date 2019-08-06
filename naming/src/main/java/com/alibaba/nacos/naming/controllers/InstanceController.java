@@ -96,7 +96,7 @@ public class InstanceController {
 
         String serviceName = WebUtils.required(request, CommonParams.SERVICE_NAME);
         String namespaceId = WebUtils.optional(request, CommonParams.NAMESPACE_ID, Constants.DEFAULT_NAMESPACE_ID);
-
+        // 注释1：注册实例时保存在内存中，而不是持久化到数据库
         serviceManager.registerInstance(namespaceId, serviceName, parseInstance(request));
         return "ok";
     }

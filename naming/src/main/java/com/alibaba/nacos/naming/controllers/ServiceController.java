@@ -46,7 +46,7 @@ import java.util.*;
 
 /**
  * Service operation controller
- *
+ * 注释1：一个服务包括多个实例
  * @author nkorange
  */
 @RestController

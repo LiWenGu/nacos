@@ -52,7 +52,7 @@ import java.util.Map;
 
 /**
  * Methods for Raft consistency protocol. These methods should only be invoked by Nacos server itself.
- *
+ * 注释1：Raft 相关接口，实际的 实例、服务 操作接口
  * @author nkorange
  * @since 1.0.0
  */

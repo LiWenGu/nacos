@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 
 /**
  * @author nkorange
+ * 注释1：容器启动时，读取
  */
 @Component("runningConfig")
 public class RunningConfig implements ApplicationListener<WebServerInitializedEvent> {

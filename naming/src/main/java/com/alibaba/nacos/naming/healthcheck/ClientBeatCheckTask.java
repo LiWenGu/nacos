@@ -70,7 +70,7 @@ public class ClientBeatCheckTask implements Runnable {
             if (!getDistroMapper().responsible(service.getName())) {
                 return;
             }
-
+            // 注释：对实例判断，最后心跳时间和当前时间对比，是否已经超时，就直接剔除
             List<Instance> instances = service.allIPs(true);
 
             // first set health status of instances:

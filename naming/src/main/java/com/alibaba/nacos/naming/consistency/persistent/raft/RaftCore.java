@@ -125,7 +125,8 @@ public class RaftCore {
         long start = System.currentTimeMillis();
 
         raftStore.loadDatums(notifier, datums);
-
+        // 注释：加载本地选票
+        // TODO 是否可以根据这个设置一个超大的选票，从而实现优先级选举？
         setTerm(NumberUtils.toLong(raftStore.loadMeta().getProperty("term"), 0L));
 
         Loggers.RAFT.info("cache loaded, datum count: {}, current term: {}", datums.size(), peers.getTerm());
@@ -140,8 +141,9 @@ public class RaftCore {
         initialized = true;
 
         Loggers.RAFT.info("finish to load data from disk, cost: {} ms.", (System.currentTimeMillis() - start));
-
+        // 注释：master 选举
         GlobalExecutor.registerMasterElection(new MasterElection());
+        // 注释：节点间心跳
         GlobalExecutor.registerHeartbeat(new HeartBeat());
 
         Loggers.RAFT.info("timer started: leader timeout ms: {}, heart-beat timeout ms: {}",
@@ -368,6 +370,8 @@ public class RaftCore {
                 }
 
                 RaftPeer local = peers.local();
+                // 注释：每次递减0.5s，直到小于0.5s，初始是15~20s的范围，这个任务0.5s执行一次，说明选举在没心跳最坏的情况
+                // 是15~20s进行一次选举，即发投票。但是心跳每条都会重置这个 leaderDueMs
                 local.leaderDueMs -= GlobalExecutor.TICK_PERIOD_MS;
 
                 if (local.leaderDueMs > 0) {
@@ -375,7 +379,9 @@ public class RaftCore {
                 }
 
                 // reset timeout
+                // 注释：重置选举时间间隔
                 local.resetLeaderDue();
+                // 注释：重置心跳时间间隔为5s
                 local.resetHeartbeatDue();
 
                 sendVote();
@@ -385,6 +391,7 @@ public class RaftCore {
 
         }
 
+        // 注释：发送选票
         public void sendVote() {
 
             RaftPeer local = peers.get(NetUtils.localServer());
@@ -392,7 +399,7 @@ public class RaftCore {
                 JSON.toJSONString(getLeader()), local.term);
 
             peers.reset();
-
+            // 注释：每次发选票都+1
             local.term.incrementAndGet();
             local.voteFor = local.ip;
             local.state = RaftPeer.State.CANDIDATE;
@@ -430,7 +437,7 @@ public class RaftCore {
         if (!peers.contains(remote)) {
             throw new IllegalStateException("can not find peer: " + remote.ip);
         }
-
+        //
         RaftPeer local = peers.get(NetUtils.localServer());
         if (remote.term.get() <= local.term.get()) {
             String msg = "received illegitimate vote" +
@@ -465,13 +472,14 @@ public class RaftCore {
                 }
 
                 RaftPeer local = peers.local();
+                // 注释：5s以上发一次心跳（初始随机0~5s）
                 local.heartbeatDueMs -= GlobalExecutor.TICK_PERIOD_MS;
                 if (local.heartbeatDueMs > 0) {
                     return;
                 }
-
+                // 注释：重置心跳间隔
                 local.resetHeartbeatDue();
-
+                // 注释：发送心跳，里面重置了 leaderDueMs 时间，即当心跳一直正常时，不会发起master选举
                 sendBeat();
             } catch (Exception e) {
                 Loggers.RAFT.warn("[RAFT] error while sending beat {}", e);
@@ -481,6 +489,7 @@ public class RaftCore {
 
         public void sendBeat() throws IOException, InterruptedException {
             RaftPeer local = peers.local();
+            // 注释：只有leader才会发心跳给其它slave节点
             if (local.state != RaftPeer.State.LEADER && !STANDALONE_MODE) {
                 return;
             }
@@ -488,7 +497,7 @@ public class RaftCore {
             if (Loggers.RAFT.isDebugEnabled()) {
                 Loggers.RAFT.debug("[RAFT] send beat with {} keys.", datums.size());
             }
-
+            // 注释：重置leader间隔到15~20s，初始是15s
             local.resetLeaderDue();
 
             // build data

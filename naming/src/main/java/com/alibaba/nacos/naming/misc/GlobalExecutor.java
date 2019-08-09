@@ -140,6 +140,7 @@ public class GlobalExecutor {
     }
 
     public static void registerHeartbeat(Runnable runnable) {
+        // 注释：心跳任务，0.5s一次
         executorService.scheduleWithFixedDelay(runnable, 0, TICK_PERIOD_MS, TimeUnit.MILLISECONDS);
     }
 

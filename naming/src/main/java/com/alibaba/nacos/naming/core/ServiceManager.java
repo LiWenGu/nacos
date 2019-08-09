@@ -418,6 +418,7 @@ public class ServiceManager implements RecordListener<Service> {
             }
             service.validate();
             if (local) {
+                // 注释：如果是临时服务
                 putServiceAndInit(service);
             } else {
                 addOrReplaceService(service);
@@ -631,8 +632,10 @@ public class ServiceManager implements RecordListener<Service> {
         serviceMap.get(service.getNamespaceId()).put(service.getName(), service);
     }
 
+
     private void putServiceAndInit(Service service) throws NacosException {
         putService(service);
+        // 注释：每次服务创建，都开启定时任务做健康检查
         service.init();
         consistencyService.listen(KeyBuilder.buildInstanceListKey(service.getNamespaceId(), service.getName(), true), service);
         consistencyService.listen(KeyBuilder.buildInstanceListKey(service.getNamespaceId(), service.getName(), false), service);

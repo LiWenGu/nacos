@@ -157,13 +157,14 @@ public class RaftPeerSet implements ServerChangeListener, ApplicationContextAwar
                 maxApprovePeer = peer.voteFor;
             }
         }
-
+        // 注释：超过半数
         if (maxApproveCount >= majorityCount()) {
             RaftPeer peer = peers.get(maxApprovePeer);
             peer.state = RaftPeer.State.LEADER;
 
             if (!Objects.equals(leader, peer)) {
                 leader = peer;
+                // 注释：发布leader选举事件
                 applicationContext.publishEvent(new LeaderElectFinishedEvent(this, leader));
                 Loggers.RAFT.info("{} has become the LEADER", leader.ip);
             }

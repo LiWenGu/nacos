@@ -70,6 +70,7 @@ public class RaftController {
     @Autowired
     private RaftCore raftCore;
 
+    // 注释1：投票，用于选举 Leader
     @NeedAuth
     @RequestMapping(value = "/vote", method = RequestMethod.POST)
     public JSONObject vote(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -80,6 +81,9 @@ public class RaftController {
         return JSON.parseObject(JSON.toJSONString(peer));
     }
 
+    /**
+     * 注释：心跳接受
+     */
     @NeedAuth
     @RequestMapping(value = "/beat", method = RequestMethod.POST)
     public JSONObject beat(HttpServletRequest request, HttpServletResponse response) throws Exception {

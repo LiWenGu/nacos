@@ -155,7 +155,7 @@ public class RaftCore {
     }
 
     public void signalPublish(String key, Record value) throws Exception {
-
+        // 注释：步骤1 如果当前不是 leader，直接请求 leader
         if (!isLeader()) {
             JSONObject params = new JSONObject();
             params.put("key", key);
@@ -182,13 +182,14 @@ public class RaftCore {
             JSONObject json = new JSONObject();
             json.put("datum", datum);
             json.put("source", peers.local());
-
+            // 注释：本节点发布 service 发布事件
             onPublish(datum, peers.local());
 
             final String content = JSON.toJSONString(json);
 
             final CountDownLatch latch = new CountDownLatch(peers.majorityCount());
             for (final String server : peers.allServersIncludeMyself()) {
+                // 注释：这里应该是避免特殊情况：步骤1 之前正在选举 leader，在这里之间选举出了 leader
                 if (isLeader(server)) {
                     latch.countDown();
                     continue;
@@ -213,7 +214,7 @@ public class RaftCore {
                 });
 
             }
-
+            // 注释：超时 5s 就算失败，但是其实本节点已经执行了 service 创建事件
             if (!latch.await(UtilsAndCommons.RAFT_PUBLISH_TIMEOUT, TimeUnit.MILLISECONDS)) {
                 // only majority servers return success can we consider this update success
                 Loggers.RAFT.error("data publish failed, caused failed to notify majority, key={}", key);
@@ -272,6 +273,7 @@ public class RaftCore {
         }
     }
 
+    // 注释：执行数据同步前，判断请求的节点是否是 leader、term 是否比自己大
     public void onPublish(Datum datum, RaftPeer source) throws Exception {
         RaftPeer local = peers.local();
         if (datum.value == null) {

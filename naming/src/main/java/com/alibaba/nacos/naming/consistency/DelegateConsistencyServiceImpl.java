@@ -75,6 +75,7 @@ public class DelegateConsistencyServiceImpl implements ConsistencyService {
         return ephemeralConsistencyService.isAvailable() && persistentConsistencyService.isAvailable();
     }
 
+    // 注释：除了临时节点走 distro 协议，其它统一走 Raft 协议
     private ConsistencyService mapConsistencyService(String key) {
         return KeyBuilder.matchEphemeralKey(key) ? ephemeralConsistencyService : persistentConsistencyService;
     }

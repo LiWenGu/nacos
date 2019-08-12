@@ -373,7 +373,7 @@ public class RaftCore {
 
                 RaftPeer local = peers.local();
                 // 注释：每次递减0.5s，直到小于0.5s，初始是15~20s的范围，这个任务0.5s执行一次，说明选举在没心跳最坏的情况
-                // 是15~20s进行一次选举，即发投票。但是心跳每条都会重置这个 leaderDueMs
+                // 是15~20s进行一次选举，即发投票。但是心跳任务每次都会重置这个 leaderDueMs 为 15s
                 local.leaderDueMs -= GlobalExecutor.TICK_PERIOD_MS;
 
                 if (local.leaderDueMs > 0) {
